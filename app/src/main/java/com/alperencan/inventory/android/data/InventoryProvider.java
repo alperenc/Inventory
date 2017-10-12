@@ -1,17 +1,58 @@
 package com.alperencan.inventory.android.data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.alperencan.inventory.android.data.InventoryContract.InventoryEntry;
 
 /**
  * {@link ContentProvider} for Inventory app.
  */
 
 public class InventoryProvider extends ContentProvider {
+
+    /**
+     * URI matcher code for the content URI for the products table
+     */
+    private static final int PRODUCTS = 100;
+
+    /**
+     * URI matcher code for the content URI for a single product in the products table
+     */
+    private static final int PRODUCT_ID = 101;
+
+    /**
+     * UriMatcher object to match a content URI to a corresponding code.
+     * The input passed into the constructor represents the code to return the root URI.
+     * It's common the use NO_MATCH as the input for this case.
+     */
+    private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    // Static initializer. This is run the first time anything is called form this class.
+    static {
+        /*
+         * The content URI of the form "content://com.alperencan.inventory.android/products"will map to the
+         * integer code {@link #PRODUCTS}. This URI is used to provide access to MULTIPLE rows
+         * of the products table.
+         */
+        uriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_PRODUCTS, PRODUCTS);
+
+        /*
+         * The content URI of the form "content://com.alperencan.inventory.android/products/#" will map to the
+         * integer code {@link #PRODUCT_ID}. This URI is used to provide access to ONE single row
+         * of the products table.
+         *
+         * In this case, the "#" wildcard is used where "#" can be substituted for an integer.
+         */
+        uriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_PRODUCTS + "#", PRODUCT_ID);
+    }
 
     /**
      * Database helper object
@@ -32,8 +73,43 @@ public class InventoryProvider extends ContentProvider {
      */
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
-        return null;
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        // Get readable database
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+
+        // This cursor will hold the result of the query
+        Cursor cursor;
+
+        // Figure out if the URI matcher can match the URI to a specific code
+        int match = uriMatcher.match(uri);
+        switch (match) {
+            case PRODUCTS:
+                /*
+                 * For the PRODUCTS code, query the products table directly with the given
+                 * projection, selection, selection arguments, and sort order.
+                 */
+                cursor = database.query(InventoryEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            case PRODUCT_ID:
+                /*
+                 * For the PRODUCT_ID code, extract out the ID fron the URI.
+                 */
+                selection = InventoryEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+
+                /*
+                 * This will perform a query on the products table to return a Cursor containing
+                 * relevant row of the table.
+                 */
+                cursor = database.query(InventoryEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            default:
+                throw new IllegalArgumentException("Cannot query unknown URI " + uri);
+        }
+
+        return cursor;
     }
 
     /**
