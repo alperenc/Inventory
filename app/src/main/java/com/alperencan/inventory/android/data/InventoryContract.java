@@ -48,15 +48,15 @@ public final class InventoryContract {
         /**
          * Price of the product.
          *
-         * TYPE: INTEGER
+         * TYPE: FLOAT
          */
         public final static String COLUMN_PRODUCT_PRICE = "price";
 
         /**
          * Photo of the product.
          *
-         * TYPE: BLOB
+         * TYPE: TEXT
          */
-        public final static String COLUMN_PRODUCT_PHOTO = "photo";
+        public final static String COLUMN_PRODUCT_PHOTO_URL = "photo";
     }
 }
