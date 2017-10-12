@@ -1,9 +1,6 @@
 package com.alperencan.inventory.android.data;
 
-import android.net.Uri;
 import android.provider.BaseColumns;
-
-import java.util.Set;
 
 /**
  * API contract for the Inventory app.
@@ -53,10 +50,10 @@ public final class InventoryContract {
         public final static String COLUMN_PRODUCT_PRICE = "price";
 
         /**
-         * Photo of the product.
+         * Photo URL of the product.
          *
          * TYPE: TEXT
          */
-        public final static String COLUMN_PRODUCT_PHOTO_URL = "photo";
+        public final static String COLUMN_PRODUCT_PHOTO_URL = "photoUrl";
     }
 }
