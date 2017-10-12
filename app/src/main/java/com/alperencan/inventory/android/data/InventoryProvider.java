@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.alperencan.inventory.android.data.InventoryContract.InventoryEntry;
 
@@ -17,6 +18,11 @@ import com.alperencan.inventory.android.data.InventoryContract.InventoryEntry;
  */
 
 public class InventoryProvider extends ContentProvider {
+
+    /**
+     * Tag for the log messages
+     */
+    public static final String LOG_TAG = InventoryProvider.class.getSimpleName();
 
     /**
      * URI matcher code for the content URI for the products table
@@ -127,7 +133,62 @@ public class InventoryProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
-        return null;
+        final int match = uriMatcher.match(uri);
+        switch (match) {
+            case PRODUCTS:
+                return insertProduct(uri, contentValues);
+            default:
+                throw new IllegalArgumentException("Insertion is not supported for " + uri);
+        }
+    }
+
+    /**
+     * Insert a product into the database with the given content values.
+     * Return the new content URI for that specific row in the database.
+     *
+     * @param uri           content URI
+     * @param contentValues product attributes
+     * @return URI for the inserted product.
+     */
+    private Uri insertProduct(Uri uri, ContentValues contentValues) {
+        // Check that the name is not null
+        String name = contentValues.getAsString(InventoryEntry.COLUMN_PRODUCT_NAME);
+        if (name == null) {
+            throw new IllegalArgumentException("Product requires a name!");
+        }
+
+        // Check that the quantity is valid
+        Integer quantity = contentValues.getAsInteger(InventoryEntry.COLUMN_PRODUCT_QUANTITY);
+        if (quantity == null || quantity < 0) {
+            throw new IllegalArgumentException("Product requires valid quantity!");
+        }
+
+        // Check that the price is valid
+        Float price = contentValues.getAsFloat(InventoryEntry.COLUMN_PRODUCT_PRICE);
+        if (price == null || price < 0.0) {
+            throw new IllegalArgumentException("Product requires valid price");
+        }
+
+        // Check that the photoUrl is not null
+        String photoUrl = contentValues.getAsString(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL);
+        if (photoUrl == null) {
+            throw new IllegalArgumentException("Product requires a photo URL!");
+        }
+
+        // Get writeable database
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+
+        // Insert new product with the given values
+        long id = sqLiteDatabase.insert(InventoryEntry.TABLE_NAME, null, contentValues);
+        // If the ID is -1, then the insertion failed. Log an error and return null.
+        if (id == -1) {
+            Log.e(LOG_TAG, "Failed to insert row for " + uri);
+            return null;
+        }
+
+        // Return the new URI with the ID (of the newly inserted row) appended at the end
+        return ContentUris.withAppendedId(uri, id);
+
     }
 
     /**

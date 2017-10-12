@@ -1,7 +1,6 @@
 package com.alperencan.inventory.android;
 
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,14 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.alperencan.inventory.android.data.InventoryContract.InventoryEntry;
-import com.alperencan.inventory.android.data.InventoryDbHelper;
 
 public class InventoryActivity extends AppCompatActivity {
-
-    /**
-     * Database helper that will provide us access to the database
-     */
-    private InventoryDbHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +29,6 @@ public class InventoryActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        dbHelper = new InventoryDbHelper(this);
     }
 
     @Override
@@ -66,9 +55,6 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private void addDummyProducts() {
-        // Gets the database in write mode
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         // Create a ContentValues object where column names are the keys,
         // and product attributes are the values.
         ContentValues iPhone8Values = new ContentValues();
@@ -78,7 +64,7 @@ public class InventoryActivity extends AppCompatActivity {
         iPhone8Values.put(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL, "android.resource://com.alperencan.inventory.android/res/drawable/iphone8.png");
 
         // Insert a new row for product in the database
-        db.insert(InventoryEntry.TABLE_NAME, null, iPhone8Values);
+        getContentResolver().insert(InventoryEntry.CONTENT_URI, iPhone8Values);
 
         // Create a ContentValues object where column names are the keys,
         // and product attributes are the values.
@@ -89,7 +75,7 @@ public class InventoryActivity extends AppCompatActivity {
         iPhone8PlusValues.put(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL, "android.resource://com.alperencan.inventory.android/res/drawable/iphone8_plus.png");
 
         // Insert a new row for product in the database
-        db.insert(InventoryEntry.TABLE_NAME, null, iPhone8PlusValues);
+        getContentResolver().insert(InventoryEntry.CONTENT_URI, iPhone8PlusValues);
 
         // Create a ContentValues object where column names are the keys,
         // and product attributes are the values.
@@ -100,7 +86,7 @@ public class InventoryActivity extends AppCompatActivity {
         iPhoneXValues.put(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL, "android.resource://com.alperencan.inventory.android/res/drawable/iphone_x.png");
 
         // Insert a new row for product in the database
-        db.insert(InventoryEntry.TABLE_NAME, null, iPhoneXValues);
+        getContentResolver().insert(InventoryEntry.CONTENT_URI, iPhoneXValues);
 
         // Create a ContentValues object where column names are the keys,
         // and product attributes are the values.
@@ -111,7 +97,7 @@ public class InventoryActivity extends AppCompatActivity {
         Pixel2Values.put(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL, "android.resource://com.alperencan.inventory.android/res/drawable/pixel2.png");
 
         // Insert a new row for product in the database
-        db.insert(InventoryEntry.TABLE_NAME, null, Pixel2Values);
+        getContentResolver().insert(InventoryEntry.CONTENT_URI, Pixel2Values);
 
         // Create a ContentValues object where column names are the keys,
         // and product attributes are the values.
@@ -122,6 +108,6 @@ public class InventoryActivity extends AppCompatActivity {
         Pixel2XLValues.put(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL, "android.resource://com.alperencan.inventory.android/res/drawable/pixel2_xl.png");
 
         // Insert a new row for product in the database
-        db.insert(InventoryEntry.TABLE_NAME, null, Pixel2XLValues);
+        getContentResolver().insert(InventoryEntry.CONTENT_URI, Pixel2XLValues);
     }
 }
