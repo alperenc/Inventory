@@ -99,7 +99,7 @@ public class InventoryProvider extends ContentProvider {
                 break;
             case PRODUCT_ID:
                 /*
-                 * For the PRODUCT_ID code, extract out the ID fron the URI.
+                 * For the PRODUCT_ID code, extract out the ID from the URI.
                  */
                 selection = InventoryEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
@@ -197,7 +197,67 @@ public class InventoryProvider extends ContentProvider {
      * Updates the data at the given selection and selection arguments, with the new ContentValues.
      */
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String selection, @Nullable String[] selectionArgs) {
+        final int match = uriMatcher.match(uri);
+        switch (match) {
+            case PRODUCTS:
+                return updateProduct(uri, contentValues, selection, selectionArgs);
+            case PRODUCT_ID:
+                /*
+                 * For the PRODUCT_ID code, extract out the ID from the URI, so we know which row
+                 * to update. Selection will be "id=?" and selection arguments will be a String
+                 * array containing the actual ID.
+                 */
+                selection = InventoryEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return update(uri, contentValues, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update is not supported for " + uri);
+        }
+    }
+
+    /**
+     * Update products in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more products).
+     * Return the number of rows that were successfully updated.
+     */
+    private int updateProduct(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
+        // If the {@link InventoryEntry#COLUMN_PRODUCT_NAME} key is present,
+        // check that the name value is not null.
+        if (contentValues.containsKey(InventoryEntry.COLUMN_PRODUCT_NAME)) {
+            String name = contentValues.getAsString(InventoryEntry.COLUMN_PRODUCT_NAME);
+            if (name == null) {
+                throw new IllegalArgumentException("Pet requires a name!");
+            }
+        }
+
+        // If the {@link InventoryEntry#COLUMN_PRODUCT_QUANTITY} key is present,
+        // check that the quantity value is valid.
+        if (contentValues.containsKey(InventoryEntry.COLUMN_PRODUCT_QUANTITY)) {
+            Integer quantity = contentValues.getAsInteger(InventoryEntry.COLUMN_PRODUCT_QUANTITY);
+            if (quantity != null && quantity < 0) {
+                throw new IllegalArgumentException("Product requires valid quantity!");
+            }
+        }
+
+        // If the {@link InventoryEntry#COLUMN_PRODUCT_QUANTITY} key is present,
+        // check that the quantity value is valid.
+        if (contentValues.containsKey(InventoryEntry.COLUMN_PRODUCT_PRICE)) {
+            Float price = contentValues.getAsFloat(InventoryEntry.COLUMN_PRODUCT_PRICE);
+            if (price != null && price < 0) {
+                throw new IllegalArgumentException("Product requires valid price");
+            }
+        }
+
+        // If there are no values to update, then don't try to update the database
+        if (contentValues.size() == 0) {
+            return 0;
+        }
+
+        // Otherwise, get writable database to update the data
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+
+        // Return the number of database rows affected by the update statement
+        return sqLiteDatabase.update(InventoryEntry.TABLE_NAME, contentValues, selection, selectionArgs);
     }
 }
