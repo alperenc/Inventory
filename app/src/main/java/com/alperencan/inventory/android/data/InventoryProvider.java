@@ -189,8 +189,23 @@ public class InventoryProvider extends ContentProvider {
      * Delete the data at the given selection and selection arguments.
      */
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+        // Get writable database
+        SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
+
+        final int match = uriMatcher.match(uri);
+        switch (match) {
+            case PRODUCTS:
+                // Delete all rows that match the selection and selection args
+                return sqLiteDatabase.delete(InventoryEntry.TABLE_NAME, selection, selectionArgs);
+            case PRODUCT_ID:
+                // Delete a single row that match the selection and selection args
+                selection = InventoryEntry._ID + "=?";
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                return sqLiteDatabase.delete(InventoryEntry.TABLE_NAME, selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Deletion is not supported for " + uri);
+        }
     }
 
     /**
@@ -245,7 +260,7 @@ public class InventoryProvider extends ContentProvider {
         if (contentValues.containsKey(InventoryEntry.COLUMN_PRODUCT_PRICE)) {
             Float price = contentValues.getAsFloat(InventoryEntry.COLUMN_PRODUCT_PRICE);
             if (price != null && price < 0) {
-                throw new IllegalArgumentException("Product requires valid price");
+                throw new IllegalArgumentException("Product requires valid price!");
             }
         }
 
