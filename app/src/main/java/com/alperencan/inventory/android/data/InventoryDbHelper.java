@@ -42,9 +42,9 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
         String SQL_CREATE_PRODUCTS_TABLE = "CREATE TABLE " + InventoryEntry.TABLE_NAME + " ("
                 + InventoryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + InventoryEntry.COLUMN_PRODUCT_NAME + " TEXT NOT NULL, "
-                + InventoryEntry.COLUMN_PRODUCT_QUANTITY + " INTEGER NOT NULL DEFAULT 0, "
-                + InventoryEntry.COLUMN_PRODUCT_PRICE + " FLOAT NOT NULL DEFAULT 0, "
-                + InventoryEntry.COLUMN_PRODUCT_PHOTO_URL + " TEXT NOT NULL DEFAULT 'android.resource://com.alperencan.inventory.android/res/mipmap/ic_launcher.png');";
+                + InventoryEntry.COLUMN_PRODUCT_QUANTITY + " INTEGER DEFAULT 0, "
+                + InventoryEntry.COLUMN_PRODUCT_PRICE + " FLOAT DEFAULT 0, "
+                + InventoryEntry.COLUMN_PRODUCT_PHOTO_URL + " TEXT DEFAULT 'android.resource://com.alperencan.inventory.android/res/mipmap/ic_launcher.png');";
 
         // Execute the SQL statement
         sqLiteDatabase.execSQL(SQL_CREATE_PRODUCTS_TABLE);

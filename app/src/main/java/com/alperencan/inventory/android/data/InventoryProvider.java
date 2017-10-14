@@ -159,23 +159,17 @@ public class InventoryProvider extends ContentProvider {
 
         // Check that the quantity is valid
         Integer quantity = contentValues.getAsInteger(InventoryEntry.COLUMN_PRODUCT_QUANTITY);
-        if (quantity == null || quantity < 0) {
+        if (quantity != null && quantity < 0) {
             throw new IllegalArgumentException("Product requires valid quantity!");
         }
 
         // Check that the price is valid
         Float price = contentValues.getAsFloat(InventoryEntry.COLUMN_PRODUCT_PRICE);
-        if (price == null || price < 0.0) {
+        if (price != null && price < 0.0) {
             throw new IllegalArgumentException("Product requires valid price");
         }
 
-        // Check that the photoUrl is not null
-        String photoUrl = contentValues.getAsString(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL);
-        if (photoUrl == null) {
-            throw new IllegalArgumentException("Product requires a photo URL!");
-        }
-
-        // Get writeable database
+        // Get writable database
         SQLiteDatabase sqLiteDatabase = dbHelper.getWritableDatabase();
 
         // Insert new product with the given values
