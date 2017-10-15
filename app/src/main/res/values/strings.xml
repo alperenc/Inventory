@@ -7,4 +7,6 @@
     <string name="product_image_desc">Product Image</string>
     <string name="sale_button_desc">Sale Button</string>
     <string name="store_image_desc">Store Image</string>
+    <string name="empty_view_title">Your store looks empty&#8230;</string>
+    <string name="empty_view_subtitle">Start by adding a product.</string>
 </resources>

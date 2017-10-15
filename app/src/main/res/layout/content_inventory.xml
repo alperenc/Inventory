@@ -34,7 +34,7 @@
             android:layout_below="@id/store_image"
             android:layout_centerHorizontal="true"
             android:paddingTop="@dimen/default_padding"
-            android:text="@string/app_name"
+            android:text="@string/empty_view_title"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Title" />
 
         <TextView
@@ -44,7 +44,7 @@
             android:layout_below="@id/empty_title_text"
             android:layout_centerHorizontal="true"
             android:paddingTop="@dimen/default_padding"
-            android:text="@string/app_name"
+            android:text="@string/empty_view_subtitle"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Subtitle" />
 
     </RelativeLayout>
