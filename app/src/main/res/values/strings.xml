@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Inventory</string>
     <string name="action_add_products">Add Dummy Products</string>
+    <string name="name">Product Name</string>
+    <string name="quantity">Product Quantity</string>
+    <string name="price">Product Price</string>
+    <string name="product_image_desc">Product Image</string>
+    <string name="sale_button_desc">Sale Button</string>
+    <string name="store_image_desc">Store Image</string>
 </resources>

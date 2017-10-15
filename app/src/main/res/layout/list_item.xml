@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="?attr/listPreferredItemHeight">
+
+    <ImageView
+        android:id="@+id/product_image"
+        android:layout_width="?attr/listPreferredItemHeight"
+        android:layout_height="?attr/listPreferredItemHeight"
+        android:contentDescription="@string/product_image_desc"
+        android:padding="@dimen/default_padding"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_store" />
+
+    <RelativeLayout
+        android:id="@+id/text_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@id/product_image"
+        android:padding="@dimen/default_padding">
+
+        <TextView
+            android:id="@+id/name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="@dimen/default_padding"
+            android:text="@string/name"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Title" />
+
+        <TextView
+            android:id="@+id/quantity_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name_text"
+            android:text="@string/quantity"
+            android:textAppearance="?android:textAppearanceLarge" />
+
+        <ImageButton
+            android:id="@+id/sale_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/sale_button_desc"
+            android:src="@drawable/ic_action_cart" />
+
+        <TextView
+            android:id="@+id/price_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/sale_button"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/sale_button"
+            android:paddingEnd="@dimen/default_padding"
+            android:paddingStart="@dimen/default_padding"
+            android:text="@string/price"
+            android:textAlignment="textEnd"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.SearchResult.Subtitle" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
