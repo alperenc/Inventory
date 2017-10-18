@@ -1,12 +1,17 @@
 <resources>
     <string name="app_name">Inventory</string>
     <string name="action_add_products">Add Dummy Products</string>
-    <string name="name">Product Name</string>
-    <string name="quantity">Product Quantity</string>
-    <string name="price">Product Price</string>
-    <string name="product_image_desc">Product Image</string>
-    <string name="sale_button_desc">Sale Button</string>
+    <string name="name">Name</string>
+    <string name="quantity">Quantity</string>
+    <string name="price">Price</string>
+    <string name="product_image_desc">Image</string>
+    <string name="sale_button_desc">Sale Button Image</string>
     <string name="store_image_desc">Store Image</string>
     <string name="empty_view_title">Your store looks empty&#8230;</string>
     <string name="empty_view_subtitle">Start by adding a product.</string>
+    <string name="currency">$</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="product_activity_title_new_product">Add a Product</string>
+    <string name="action_delete_all_products">Delete All Products</string>
 </resources>

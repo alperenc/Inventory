@@ -1,10 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.alperencan.inventory.android.InventoryActivity">
+    tools:context="com.alperencan.inventory.android.activity.InventoryActivity">
     <item
         android:id="@+id/action_add_products"
         android:orderInCategory="100"
         android:title="@string/action_add_products"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_delete_all_products"
+        android:title="@string/action_delete_all_products"
         app:showAsAction="never" />
 </menu>

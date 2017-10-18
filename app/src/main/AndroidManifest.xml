@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".InventoryActivity"
+            android:name=".activity.InventoryActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -19,10 +19,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <provider
             android:name=".data.InventoryProvider"
             android:authorities="com.alperencan.inventory.android"
             android:exported="false" />
+
+        <activity
+            android:name=".activity.ProductActivity"
+            android:label="@string/product_activity_title_new_product"
+            android:parentActivityName=".activity.InventoryActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.InventoryActivity" />
+        </activity>
     </application>
 
 </manifest>
