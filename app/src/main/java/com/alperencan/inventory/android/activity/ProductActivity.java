@@ -1,12 +1,16 @@
 package com.alperencan.inventory.android.activity;
 
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.alperencan.inventory.android.R;
+import com.alperencan.inventory.android.data.InventoryContract.InventoryEntry;
 
 /**
  * Allows user to create a new product or edit an existing one.
@@ -45,6 +49,35 @@ public class ProductActivity extends AppCompatActivity {
         priceEditText = (EditText) findViewById(R.id.edit_product_price);
     }
 
+    private void insertProduct() {
+        // Read from input fields. Use trim to eliminate leading or trailing white space
+        String nameString = nameEditText.getText().toString().trim();
+        String imageUrlString = imageUrlEditText.getText().toString().trim();
+        int quantity = Integer.parseInt(quantityEditText.getText().toString().trim());
+        float price = Float.parseFloat(priceEditText.getText().toString().trim());
+
+        // Create a ContentValues object where column names are the keys, and product attributes are the values.
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
+        contentValues.put(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL, imageUrlString);
+        contentValues.put(InventoryEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+        contentValues.put(InventoryEntry.COLUMN_PRODUCT_PRICE, price);
+
+        // Insert a new product into the provider, returning the content URI for the new product.
+        Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, contentValues);
+
+        // Show a Snackbar message depending on whether or not the insertion was successful
+        if (newUri == null) {
+            // If the new content URI is null, then there was an error with insertion.
+            Toast.makeText(this, getString(R.string.insert_product_failed),
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            // Otherwise, the insertion was successful and we can display a toast.
+            Toast.makeText(this, getString(R.string.insert_product_successful),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_product, menu);
@@ -57,7 +90,10 @@ public class ProductActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
-                // Do nothing for now
+                // Save product to database
+                insertProduct();
+                // Exit activity
+                finish();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
