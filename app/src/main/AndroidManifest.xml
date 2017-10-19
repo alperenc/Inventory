@@ -27,7 +27,6 @@
 
         <activity
             android:name=".activity.ProductActivity"
-            android:label="@string/product_activity_title_new_product"
             android:parentActivityName=".activity.InventoryActivity">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data

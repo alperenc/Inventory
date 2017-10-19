@@ -42,6 +42,19 @@ public class ProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
 
+        // If the intent that was used to launch this activity contains a product content URI,
+        // then we know that we are editing an existing product
+        if (getIntent().getData() != null) {
+            // Change the app bar to say "Edit Product"
+            setTitle(getString(R.string.product_activity_title_edit_product));
+        } else {
+            // Change the app bar to say "Add a Product"
+            setTitle(getString(R.string.product_activity_title_new_product));
+
+            // Invalidate the options menu, so the "Delete" menu option can be hidden.
+            invalidateOptionsMenu();
+        }
+
         // Find all relevant views that we will need to read user input from
         nameEditText = (EditText) findViewById(R.id.edit_product_name);
         imageUrlEditText = (EditText) findViewById(R.id.edit_product_image_url);
@@ -66,7 +79,7 @@ public class ProductActivity extends AppCompatActivity {
         // Insert a new product into the provider, returning the content URI for the new product.
         Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, contentValues);
 
-        // Show a Snackbar message depending on whether or not the insertion was successful
+        // Show a Toast message depending on whether or not the insertion was successful
         if (newUri == null) {
             // If the new content URI is null, then there was an error with insertion.
             Toast.makeText(this, getString(R.string.insert_product_failed),

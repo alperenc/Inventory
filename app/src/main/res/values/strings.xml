@@ -13,6 +13,7 @@
     <string name="action_save">Save</string>
     <string name="action_delete">Delete</string>
     <string name="product_activity_title_new_product">Add a Product</string>
+    <string name="product_activity_title_edit_product">Edit Product</string>
     <string name="action_delete_all_products">Delete All Products</string>
     <string name="insert_product_failed">Error with saving product</string>
     <string name="insert_product_successful">Product saved</string>

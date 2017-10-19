@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -62,6 +63,7 @@ public class ProductCursorAdapter extends CursorAdapter {
         TextView nameTextView = view.findViewById(R.id.name_text);
         TextView quantityTextView = view.findViewById(R.id.quantity_text);
         TextView priceTextView = view.findViewById(R.id.price_text);
+        ImageButton saleImageButton = view.findViewById(R.id.sale_button);
 
         // Find the columns of the product attributes from the Cursor for the current product
         Uri imageUri = Uri.parse(cursor.getString(cursor.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL)));
