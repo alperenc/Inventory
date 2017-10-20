@@ -81,7 +81,7 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         priceEditText = (EditText) findViewById(R.id.edit_product_price);
     }
 
-    private void insertProduct() {
+    private void saveProduct() {
         // Read from input fields. Use trim to eliminate leading or trailing white space
         String nameString = nameEditText.getText().toString().trim();
         String imageUriString = imageUriEditText.getText().toString().trim();
@@ -95,11 +95,18 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         contentValues.put(InventoryEntry.COLUMN_PRODUCT_QUANTITY, quantity);
         contentValues.put(InventoryEntry.COLUMN_PRODUCT_PRICE, price);
 
-        // Insert a new product into the provider, returning the content URI for the new product.
-        Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, contentValues);
+        Uri savedUri;
 
-        // Show a Toast message depending on whether or not the insertion was successful
-        if (newUri == null) {
+        if (selectedProductUri != null) {
+            getContentResolver().update(selectedProductUri, contentValues, null, null);
+            savedUri = selectedProductUri;
+        } else {
+            // Insert a new product into the provider, returning the content URI for the new product.
+            savedUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, contentValues);
+        }
+
+        // Show a Toast message depending on whether or not the insertion/update was successful
+        if (savedUri == null) {
             // If the new content URI is null, then there was an error with insertion.
             Toast.makeText(this, getString(R.string.insert_product_failed),
                     Toast.LENGTH_SHORT).show();
@@ -123,7 +130,7 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
             // Respond to a click on the "Save" menu option
             case R.id.action_save:
                 // Save product to database
-                insertProduct();
+                saveProduct();
                 // Exit activity
                 finish();
                 return true;
