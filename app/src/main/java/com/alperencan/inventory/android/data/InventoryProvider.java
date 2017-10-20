@@ -57,7 +57,7 @@ public class InventoryProvider extends ContentProvider {
          *
          * In this case, the "#" wildcard is used where "#" can be substituted for an integer.
          */
-        uriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_PRODUCTS + "#", PRODUCT_ID);
+        uriMatcher.addURI(InventoryContract.CONTENT_AUTHORITY, InventoryContract.PATH_PRODUCTS + "/#", PRODUCT_ID);
     }
 
     /**
