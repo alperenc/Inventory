@@ -17,4 +17,6 @@
     <string name="action_delete_all_products">Delete All Products</string>
     <string name="insert_product_failed">Error with saving product</string>
     <string name="insert_product_successful">Product saved</string>
+    <string name="update_product_failed">Error with updating product</string>
+    <string name="update_product_successful">Product updated</string>
 </resources>

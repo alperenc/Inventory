@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -85,35 +86,68 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         // Read from input fields. Use trim to eliminate leading or trailing white space
         String nameString = nameEditText.getText().toString().trim();
         String imageUriString = imageUriEditText.getText().toString().trim();
-        int quantity = Integer.parseInt(quantityEditText.getText().toString().trim());
-        float price = Float.parseFloat(priceEditText.getText().toString().trim());
+        String quantityString = quantityEditText.getText().toString().trim();
+        String priceString = priceEditText.getText().toString().trim();
+
+        if (selectedProductUri == null && TextUtils.isEmpty(nameString)) {
+            // Since no name was entered we can return early without creating a product.
+            // No need to create ContentValues and no need to do any ContentProvider operations.
+            return;
+        }
 
         // Create a ContentValues object where column names are the keys, and product attributes are the values.
         ContentValues contentValues = new ContentValues();
         contentValues.put(InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
-        contentValues.put(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL, imageUriString);
-        contentValues.put(InventoryEntry.COLUMN_PRODUCT_QUANTITY, quantity);
-        contentValues.put(InventoryEntry.COLUMN_PRODUCT_PRICE, price);
 
-        Uri savedUri;
-
-        if (selectedProductUri != null) {
-            getContentResolver().update(selectedProductUri, contentValues, null, null);
-            savedUri = selectedProductUri;
-        } else {
-            // Insert a new product into the provider, returning the content URI for the new product.
-            savedUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, contentValues);
+        // If the image uri is not provided by the user, don't include it in ContentValues object. Instead, use default value.
+        if (!TextUtils.isEmpty(imageUriString)) {
+            contentValues.put(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL, imageUriString);
         }
 
-        // Show a Toast message depending on whether or not the insertion/update was successful
-        if (savedUri == null) {
-            // If the new content URI is null, then there was an error with insertion.
-            Toast.makeText(this, getString(R.string.insert_product_failed),
-                    Toast.LENGTH_SHORT).show();
+        // If the quantity is not provided by the user, don't try to parse the string into an
+        // integer value and don't include in ContentValues object. Instead, use default value.
+        if (!TextUtils.isEmpty(quantityString)) {
+            contentValues.put(InventoryEntry.COLUMN_PRODUCT_QUANTITY, Integer.parseInt(quantityString));
+        }
+
+        // If the price is not provided by the user, don't try to parse the string into a
+        // float value and don't include in ContentValues object. Instead, use default value.
+        if (!TextUtils.isEmpty(priceString)) {
+            contentValues.put(InventoryEntry.COLUMN_PRODUCT_PRICE, Float.parseFloat(priceString));
+        }
+
+        // Determine if this is a new or existing product by checking if selectedProductUri is null
+
+        if (selectedProductUri != null) {
+            // This is an existing product, so update the the product with content URI: selectedProductUri
+            // and pass in the new ContentValues. Pass in null for selection and selection args because
+            // selectedProductUri will already identify the correct row in the database
+            int rowsAffected = getContentResolver().update(selectedProductUri, contentValues, null, null);
+
+            // Show a Toast message depending on whether or not the update was successful
+            if (rowsAffected == 0) {
+                // If the new content URI is null, then there was an error with insertion.
+                Toast.makeText(this, getString(R.string.update_product_failed),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                // Otherwise, the insertion was successful and we can display a toast.
+                Toast.makeText(this, getString(R.string.update_product_successful),
+                        Toast.LENGTH_SHORT).show();
+            }
         } else {
-            // Otherwise, the insertion was successful and we can display a toast.
-            Toast.makeText(this, getString(R.string.insert_product_successful),
-                    Toast.LENGTH_SHORT).show();
+            // Insert a new product into the provider, returning the content URI for the new product.
+            Uri newUri = getContentResolver().insert(InventoryEntry.CONTENT_URI, contentValues);
+
+            // Show a Toast message depending on whether or not the insertion/update was successful
+            if (newUri == null) {
+                // If the new content URI is null, then there was an error with insertion.
+                Toast.makeText(this, getString(R.string.insert_product_failed),
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                // Otherwise, the insertion was successful and we can display a toast.
+                Toast.makeText(this, getString(R.string.insert_product_successful),
+                        Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
