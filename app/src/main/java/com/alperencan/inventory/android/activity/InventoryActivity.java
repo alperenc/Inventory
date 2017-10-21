@@ -107,12 +107,15 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
                 return true;
             // Respond to a click on the "Delete All Products" menu option
             case R.id.action_delete_all_products:
-                // Do nothing for now
+                deleteAllProducts();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Helper method to insert hardcoded product data into the database. For debugging purposes only.
+     */
     private void addDummyProducts() {
         // Create a ContentValues object where column names are the keys,
         // and product attributes are the values.
@@ -168,6 +171,14 @@ public class InventoryActivity extends AppCompatActivity implements LoaderManage
 
         // Insert a new row for product in the database
         getContentResolver().insert(InventoryEntry.CONTENT_URI, Pixel2XLValues);
+    }
+
+    /**
+     * Helper method to delete all products in the database.
+     */
+    private void deleteAllProducts() {
+        int rowsDeleted = getContentResolver().delete(InventoryEntry.CONTENT_URI, null, null);
+        Log.v("CatalogActivity", rowsDeleted + " rows deleted from pet database");
     }
 
     @Override
