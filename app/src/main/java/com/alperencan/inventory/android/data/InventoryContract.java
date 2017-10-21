@@ -70,6 +70,13 @@ public final class InventoryContract {
         public final static String COLUMN_PRODUCT_NAME ="name";
 
         /**
+         * Photo URL of the product.
+         *
+         * TYPE: TEXT
+         */
+        public final static String COLUMN_PRODUCT_PHOTO_URL = "photoUrl";
+
+        /**
          * Quantity of the product.
          *
          * TYPE: INTEGER
@@ -84,10 +91,18 @@ public final class InventoryContract {
         public final static String COLUMN_PRODUCT_PRICE = "price";
 
         /**
-         * Photo URL of the product.
+         * Supplier name of the product.
          *
          * TYPE: TEXT
          */
-        public final static String COLUMN_PRODUCT_PHOTO_URL = "photoUrl";
+        public final static String COLUMN_SUPPLIER_NAME = "supplierName";
+
+        /**
+         * Supplier phone of the product.
+         * <p>
+         * TYPE: TEXT
+         */
+        public final static String COLUMN_SUPPLIER_PHONE = "supplierPhone";
+
     }
 }

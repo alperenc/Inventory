@@ -5,6 +5,7 @@ import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,7 +17,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.alperencan.inventory.android.R;
@@ -56,6 +59,16 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
      * EditText field to enter the product's price
      */
     private EditText priceEditText;
+
+    /**
+     * EditText field to enter the product's supplier name
+     */
+    private EditText supplierNameEditText;
+
+    /**
+     * EditText field to enter the product's supplier phone
+     */
+    private EditText supplierPhoneEditText;
 
     /**
      * Boolean flag that keeps track of whether the product has been edited (true) or not (false)
@@ -112,6 +125,12 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         imageUriEditText = (EditText) findViewById(R.id.edit_product_image_uri);
         quantityEditText = (EditText) findViewById(R.id.edit_product_quantity);
         priceEditText = (EditText) findViewById(R.id.edit_product_price);
+        supplierNameEditText = (EditText) findViewById(R.id.edit_supplier_name);
+        supplierPhoneEditText = (EditText) findViewById(R.id.edit_supplier_phone);
+        ImageButton subtractQuantityButton = (ImageButton) findViewById(R.id.action_subtract_quantity);
+        ImageButton addQuantityButton = (ImageButton) findViewById(R.id.action_add_quantity);
+        Button orderMoreButton = (Button) findViewById(R.id.action_order);
+
 
         // Setup OnTouchListeners on all the input fields, so we can determine if the user
         // has touched or modified them. This will let us know if there are unsaved changes
@@ -120,6 +139,44 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         imageUriEditText.setOnTouchListener(touchListener);
         quantityEditText.setOnTouchListener(touchListener);
         priceEditText.setOnTouchListener(touchListener);
+        supplierNameEditText.setOnTouchListener(touchListener);
+        supplierPhoneEditText.setOnTouchListener(touchListener);
+        subtractQuantityButton.setOnTouchListener(touchListener);
+        addQuantityButton.setOnTouchListener(touchListener);
+        orderMoreButton.setOnTouchListener(touchListener);
+
+        subtractQuantityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentQuantity = Integer.parseInt(quantityEditText.getText().toString().trim());
+                if (currentQuantity > 0) {
+                    quantityEditText.setText(String.valueOf(currentQuantity - 1));
+                }
+            }
+        });
+
+        addQuantityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int currentQuantity = Integer.parseInt(quantityEditText.getText().toString().trim());
+                quantityEditText.setText(String.valueOf(currentQuantity + 1));
+            }
+        });
+
+        orderMoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!supplierPhoneEditText.getText().toString().trim().isEmpty()) {
+                    // Create new intent to go to Phone app
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse(String.format("tel:%s", supplierPhoneEditText.getText().toString().trim())));
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(view.getContext(), view.getContext().getString(R.string.no_supplier_phone),
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     /**
@@ -154,6 +211,8 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         String imageUriString = imageUriEditText.getText().toString().trim();
         String quantityString = quantityEditText.getText().toString().trim();
         String priceString = priceEditText.getText().toString().trim();
+        String supplierNameString = supplierNameEditText.getText().toString().trim();
+        String supplierPhoneString = supplierPhoneEditText.getText().toString().trim();
 
         if (selectedProductUri == null && TextUtils.isEmpty(nameString)) {
             // Since no name was entered we can return early without creating a product.
@@ -182,8 +241,10 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
             contentValues.put(InventoryEntry.COLUMN_PRODUCT_PRICE, Float.parseFloat(priceString));
         }
 
-        // Determine if this is a new or existing product by checking if selectedProductUri is null
+        contentValues.put(InventoryEntry.COLUMN_SUPPLIER_NAME, supplierNameString);
+        contentValues.put(InventoryEntry.COLUMN_SUPPLIER_PHONE, supplierPhoneString);
 
+        // Determine if this is a new or existing product by checking if selectedProductUri is null
         if (selectedProductUri != null) {
             // This is an existing product, so update the the product with content URI: selectedProductUri
             // and pass in the new ContentValues. Pass in null for selection and selection args because
@@ -387,18 +448,24 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
             int imageUriColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL);
             int quantityColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_QUANTITY);
             int priceColumnIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_PRODUCT_PRICE);
+            int supplierNameIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER_NAME);
+            int supplierPhoneIndex = cursor.getColumnIndex(InventoryEntry.COLUMN_SUPPLIER_PHONE);
 
             // Extract out the value from the Cursor for the given column index
             String name = cursor.getString(nameColumnIndex);
             String imageUri = cursor.getString(imageUriColumnIndex);
             int quantity = cursor.getInt(quantityColumnIndex);
             float price = cursor.getFloat(priceColumnIndex);
+            String supplierName = cursor.getString(supplierNameIndex);
+            final String supplierPhone = cursor.getString(supplierPhoneIndex);
 
             // Update the views on the screen with the values from the database
             nameEditText.setText(name);
             imageUriEditText.setText(imageUri);
             quantityEditText.setText(String.valueOf(quantity));
             priceEditText.setText(String.valueOf(price));
+            supplierNameEditText.setText(supplierName);
+            supplierPhoneEditText.setText(supplierPhone);
         }
     }
 
@@ -409,5 +476,7 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         imageUriEditText.setText("");
         quantityEditText.setText("");
         priceEditText.setText("");
+        supplierNameEditText.setText("");
+        supplierPhoneEditText.setText("");
     }
 }
