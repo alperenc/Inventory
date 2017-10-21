@@ -46,4 +46,6 @@
 
     <!-- Label for 'TBD' [CHAR LIMIT=20] -->
     <string name="tbd">TBD</string>
+
+    <string name="out_of_stock">Product is out of stock.</string>
 </resources>

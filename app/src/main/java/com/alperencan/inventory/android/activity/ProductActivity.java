@@ -192,11 +192,9 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
 
             // Show a Toast message depending on whether or not the update was successful
             if (rowsAffected == 0) {
-                // If the new content URI is null, then there was an error with insertion.
                 Toast.makeText(this, getString(R.string.update_product_failed),
                         Toast.LENGTH_SHORT).show();
             } else {
-                // Otherwise, the insertion was successful and we can display a toast.
                 Toast.makeText(this, getString(R.string.update_product_successful),
                         Toast.LENGTH_SHORT).show();
             }
