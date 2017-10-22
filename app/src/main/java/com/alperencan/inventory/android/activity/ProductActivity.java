@@ -20,10 +20,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.alperencan.inventory.android.R;
 import com.alperencan.inventory.android.data.InventoryContract.InventoryEntry;
+import com.bumptech.glide.Glide;
 
 /**
  * Allows user to create a new product or edit an existing one.
@@ -69,6 +71,11 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
      * EditText field to enter the product's supplier phone
      */
     private EditText supplierPhoneEditText;
+
+    /**
+     * ImageView to show product image
+     */
+    private ImageView productImageView;
 
     /**
      * Boolean flag that keeps track of whether the product has been edited (true) or not (false)
@@ -121,15 +128,16 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         }
 
         // Find all relevant views that we will need to read user input from
-        nameEditText = (EditText) findViewById(R.id.edit_product_name);
-        imageUriEditText = (EditText) findViewById(R.id.edit_product_image_uri);
-        quantityEditText = (EditText) findViewById(R.id.edit_product_quantity);
-        priceEditText = (EditText) findViewById(R.id.edit_product_price);
-        supplierNameEditText = (EditText) findViewById(R.id.edit_supplier_name);
-        supplierPhoneEditText = (EditText) findViewById(R.id.edit_supplier_phone);
-        ImageButton subtractQuantityButton = (ImageButton) findViewById(R.id.action_subtract_quantity);
-        ImageButton addQuantityButton = (ImageButton) findViewById(R.id.action_add_quantity);
-        Button orderMoreButton = (Button) findViewById(R.id.action_order);
+        nameEditText = findViewById(R.id.edit_product_name);
+        imageUriEditText = findViewById(R.id.edit_product_image_uri);
+        quantityEditText = findViewById(R.id.edit_product_quantity);
+        priceEditText = findViewById(R.id.edit_product_price);
+        supplierNameEditText = findViewById(R.id.edit_supplier_name);
+        supplierPhoneEditText = findViewById(R.id.edit_supplier_phone);
+        productImageView = findViewById(R.id.product_image);
+        ImageButton subtractQuantityButton = findViewById(R.id.action_subtract_quantity);
+        ImageButton addQuantityButton = findViewById(R.id.action_add_quantity);
+        Button orderMoreButton = findViewById(R.id.action_order);
 
 
         // Setup OnTouchListeners on all the input fields, so we can determine if the user
@@ -141,6 +149,7 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         priceEditText.setOnTouchListener(touchListener);
         supplierNameEditText.setOnTouchListener(touchListener);
         supplierPhoneEditText.setOnTouchListener(touchListener);
+        productImageView.setOnTouchListener(touchListener);
         subtractQuantityButton.setOnTouchListener(touchListener);
         addQuantityButton.setOnTouchListener(touchListener);
         orderMoreButton.setOnTouchListener(touchListener);
@@ -473,6 +482,7 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
             priceEditText.setText(String.valueOf(price));
             supplierNameEditText.setText(supplierName);
             supplierPhoneEditText.setText(supplierPhone);
+            Glide.with(this).load(imageUri).into(productImageView);
         }
     }
 
