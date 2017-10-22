@@ -148,9 +148,14 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         subtractQuantityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentQuantity = Integer.parseInt(quantityEditText.getText().toString().trim());
-                if (currentQuantity > 0) {
-                    quantityEditText.setText(String.valueOf(currentQuantity - 1));
+                String quantityString = quantityEditText.getText().toString().trim();
+                if (!quantityString.isEmpty()) {
+                    int quantity = Integer.parseInt(quantityString);
+                    if (quantity > 0) {
+                        quantityEditText.setText(String.valueOf(quantity - 1));
+                    }
+                } else {
+                    quantityEditText.setText(String.valueOf(0));
                 }
             }
         });
@@ -158,18 +163,24 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         addQuantityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentQuantity = Integer.parseInt(quantityEditText.getText().toString().trim());
-                quantityEditText.setText(String.valueOf(currentQuantity + 1));
+                String quantityString = quantityEditText.getText().toString().trim();
+                if (!quantityString.isEmpty()) {
+                    int quantity = Integer.parseInt(quantityString);
+                    quantityEditText.setText(String.valueOf(quantity + 1));
+                } else {
+                    quantityEditText.setText(String.valueOf(1));
+                }
             }
         });
 
         orderMoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!supplierPhoneEditText.getText().toString().trim().isEmpty()) {
+                String supplierPhoneString = supplierPhoneEditText.getText().toString().trim();
+                if (!supplierPhoneString.isEmpty()) {
                     // Create new intent to go to Phone app
                     Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse(String.format("tel:%s", supplierPhoneEditText.getText().toString().trim())));
+                    intent.setData(Uri.parse(String.format("tel:%s", supplierPhoneString)));
                     startActivity(intent);
                 } else {
                     Toast.makeText(view.getContext(), view.getContext().getString(R.string.no_supplier_phone),
@@ -214,33 +225,25 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         String supplierNameString = supplierNameEditText.getText().toString().trim();
         String supplierPhoneString = supplierPhoneEditText.getText().toString().trim();
 
-        if (selectedProductUri == null && TextUtils.isEmpty(nameString)) {
-            // Since no name was entered we can return early without creating a product.
+        if (selectedProductUri == null
+                && (TextUtils.isEmpty(nameString)
+                || TextUtils.isEmpty(imageUriString)
+                || TextUtils.isEmpty(quantityString)
+                || TextUtils.isEmpty(priceString)
+                || TextUtils.isEmpty(supplierNameString)
+                || TextUtils.isEmpty(supplierPhoneString))) {
+            // Since there are missing fields, we can return early without creating a product.
             // No need to create ContentValues and no need to do any ContentProvider operations.
+            Toast.makeText(this, getString(R.string.missing_fields), Toast.LENGTH_LONG).show();
             return;
         }
 
         // Create a ContentValues object where column names are the keys, and product attributes are the values.
         ContentValues contentValues = new ContentValues();
         contentValues.put(InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
-
-        // If the image uri is not provided by the user, don't include it in ContentValues object. Instead, use default value.
-        if (!TextUtils.isEmpty(imageUriString)) {
-            contentValues.put(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL, imageUriString);
-        }
-
-        // If the quantity is not provided by the user, don't try to parse the string into an
-        // integer value and don't include in ContentValues object. Instead, use default value.
-        if (!TextUtils.isEmpty(quantityString)) {
-            contentValues.put(InventoryEntry.COLUMN_PRODUCT_QUANTITY, Integer.parseInt(quantityString));
-        }
-
-        // If the price is not provided by the user, don't try to parse the string into a
-        // float value and don't include in ContentValues object. Instead, use default value.
-        if (!TextUtils.isEmpty(priceString)) {
-            contentValues.put(InventoryEntry.COLUMN_PRODUCT_PRICE, Float.parseFloat(priceString));
-        }
-
+        contentValues.put(InventoryEntry.COLUMN_PRODUCT_PHOTO_URL, imageUriString);
+        contentValues.put(InventoryEntry.COLUMN_PRODUCT_QUANTITY, Integer.parseInt(quantityString));
+        contentValues.put(InventoryEntry.COLUMN_PRODUCT_PRICE, Float.parseFloat(priceString));
         contentValues.put(InventoryEntry.COLUMN_SUPPLIER_NAME, supplierNameString);
         contentValues.put(InventoryEntry.COLUMN_SUPPLIER_PHONE, supplierPhoneString);
 
@@ -258,6 +261,9 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
             } else {
                 Toast.makeText(this, getString(R.string.update_product_successful),
                         Toast.LENGTH_SHORT).show();
+
+                // Exit activity
+                finish();
             }
         } else {
             // Insert a new product into the provider, returning the content URI for the new product.
@@ -272,6 +278,9 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
                 // Otherwise, the insertion was successful and we can display a toast.
                 Toast.makeText(this, getString(R.string.insert_product_successful),
                         Toast.LENGTH_SHORT).show();
+
+                // Exit activity
+                finish();
             }
         }
     }
@@ -386,8 +395,6 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
             case R.id.action_save:
                 // Save product to database
                 saveProduct();
-                // Exit activity
-                finish();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:
